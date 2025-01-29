@@ -45,12 +45,6 @@ extension RecipesTab {
             filteredRecipes = recipes?.filter { $0.cuisine.lowercased() == cusineType.rawValue }
         }
         
-        func onRefresh() {
-            Task {
-                await fetchAllRecipes()
-            }
-        }
-        
         func reset() {
             self.errorMessage = nil
             self.recipes = nil

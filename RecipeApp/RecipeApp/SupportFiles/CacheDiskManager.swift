@@ -11,7 +11,7 @@ final class CacheDiskManager {
     
     private init() {
         let cachePath = fileManager.urls(for: .cachesDirectory, in: .userDomainMask).first!
-        
+
         cacheDirectory = cachePath.appendingPathComponent(cacheDirectoryName, isDirectory: true)
     }
     
@@ -22,6 +22,7 @@ final class CacheDiskManager {
     func clearCacheDirectory() {
         guard cacheDirectoryExists() else { return }
         do {
+            // Clears the folder and the contents inside it
             try fileManager.removeItem(at: cacheDirectory)
         } catch {
             debugPrint("Error in deleting cache directory :\(cacheDirectory) of file \(error.localizedDescription)")
