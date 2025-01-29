@@ -16,13 +16,16 @@ FlavorScript is a simple SwiftUI app to display list of recipes from json.
 
 | App Icon | Splash Screen |
 |-|-|
-| ![AppIcon](/screenshots/AppIcon.png) | ![SplashScreen](/screenshots/SplashScreen.png) |
+| <img width=100 src="screenshots/AppIcon.png"/> | <img width=100 src="screenshots/SplashScreen.png"/> |
 
+## Video 
+<video width=200 src="screenshots/Video.mov" controls width="600"></video>
 
 ### Focus Areas:
 * MVVM architecture - Clear separation of logic and UI.
 * Caching - fetch from the disk instead calling network
-* Functional changes - used modular design and resuable components 
+* Functional changes - Implemented a modular design with reusable components for scalability.
+* Unit Testing – Ensured code reliability through test coverage.
 
 ### Time spent on this project
 Spent approx 4-5 hours 
@@ -35,7 +38,9 @@ Spent approx 4-5 hours
 
 ### Trade-offs and Decisions: 
 * Used only disk caching and no in-memory caching to keep it minimal 
-* Used the 3 jsons to switch between success, malformed and empty states and 
+* Used three JSON files to toggle between success, malformed, and empty states depending on the user settings. 
+* Although originally designed as a single-page app, added tab navigation for better organization.
+* Included a Settings page to manage developer options, such as switching response types and clearing image caches.
 
 ### What could be improved?
 * Unreliable cache directory: I used cache directory which can be cleared by the system during low storage which makes it unreliable for long-term storage. Also could have used in-memory cache NSCache for fast access.
