@@ -55,9 +55,7 @@ extension RecipesTab {
             reset()
             do  {
                 let response = try await recipeService.fetchRecipes(responseFileName)
-                await MainActor.run {
                     self.recipes = response?.recipes
-                }
             } catch {
                 self.errorMessage = AppStrings.Error.genericServerError.value
             }

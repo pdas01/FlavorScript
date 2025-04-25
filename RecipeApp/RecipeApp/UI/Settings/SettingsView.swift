@@ -26,7 +26,10 @@ struct SettingsView: View {
                     }
                     .pickerStyle(.menu)
                     Button("Clear Image Caches") {
-                        CacheDiskManager.shared.clearCacheDirectory()
+                        Task {
+                           await  CacheDiskManager.shared.clearCacheDirectory()
+                        }
+                        
                     }
                 }
                 .tint(.black)

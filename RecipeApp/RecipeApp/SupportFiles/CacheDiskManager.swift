@@ -3,17 +3,22 @@ import SwiftUI
 /**
  CacheDiskManager saves and loads image data to and from the cache disk
  */
-final class CacheDiskManager {
+actor CacheDiskManager {
     static let shared = CacheDiskManager()
     private let fileManager = FileManager.default
     private let cacheDirectory: URL
     private let cacheDirectoryName: String = "RecipeImageCache"
+    private let ioQueue = DispatchQueue(label: "CacheDiskManagerQueue", attributes: .concurrent)
     
-    private init() {
-        let cachePath = fileManager.urls(for: .cachesDirectory, in: .userDomainMask).first!
-
-        cacheDirectory = cachePath.appendingPathComponent(cacheDirectoryName, isDirectory: true)
+    init(cacheDirectory: URL? = nil) {
+        if let cacheDirectory = cacheDirectory {
+            self.cacheDirectory = cacheDirectory
+        } else {
+            let cachePath = fileManager.urls(for: .cachesDirectory, in: .userDomainMask).first!
+            self.cacheDirectory = cachePath.appendingPathComponent(cacheDirectoryName, isDirectory: true)
+        }
     }
+    
     
     func cacheDirectoryExists() -> Bool {
         fileManager.fileExists(atPath: cacheDirectory.path)
@@ -41,7 +46,7 @@ final class CacheDiskManager {
         }
     }
     
-    func loadImage(cacheKey: String) -> Data? {
+    func loadImage(cacheKey: String) async -> Data? {
         let fileURL = cacheDirectory.appendingPathComponent(cacheKey)
         guard cacheDirectoryExists() && fileManager.fileExists(atPath: fileURL.path) else {
             debugPrint("Cache does not exist. Load from network.")

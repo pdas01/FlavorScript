@@ -3,13 +3,20 @@ import SwiftUI
 /**
  ImageLoadingService class loads image from either cache disk or from the network 
  */
+
+@MainActor
 final class ImageLoadingService: ObservableObject {
     @Published var image: Image? = nil
     private let cacheDiskManager = CacheDiskManager.shared
     
+    nonisolated let session: NetworkSession
+    
+    init(session: NetworkSession = URLSession.shared) {
+        self.session = session
+    }
     private func loadFromNetwork(url: URL) async -> Data? {
         do {
-            let (data, _) = try await URLSession.shared.data(for: URLRequest(url: url))
+            let (data, _) = try await session.data(for: URLRequest(url: url))
             return data
         } catch {
             debugPrint("Error when fetching image from server", error.localizedDescription)
@@ -33,7 +40,7 @@ final class ImageLoadingService: ObservableObject {
             return
         }
 
-        if let cachedImageData = cacheDiskManager.loadImage(cacheKey: cacheKey)  {
+        if let cachedImageData = await cacheDiskManager.loadImage(cacheKey: cacheKey)  {
             let uiImage = UIImage(data: cachedImageData)
             if let uiImage = uiImage {
                 await MainActor.run { [weak self] in
@@ -44,10 +51,10 @@ final class ImageLoadingService: ObservableObject {
             // Fetch from network
             let imageData = await loadFromNetwork(url: url)
             if let imageData = imageData, let uiImage = UIImage(data: imageData) {
-                await MainActor.run { [weak self] in
-                    self?.cacheDiskManager.saveImage(imageData: imageData, cacheKey: cacheKey)
-                    self?.image = Image(uiImage: uiImage)
-                }
+                // Save image in cache (must be awaited first)
+                    await cacheDiskManager.saveImage(imageData: imageData, cacheKey: cacheKey)
+                    // // ✅ Then update UI (Main Actor)
+                    self.image = Image(uiImage: uiImage)
             }
         }
     }

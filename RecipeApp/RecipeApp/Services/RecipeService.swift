@@ -3,6 +3,7 @@ import Foundation
 /**
  RecipeService is a service that calls networkmanager 
  */
+@MainActor
 final class RecipeService {
     private let networkManager = NetworkManager()
 

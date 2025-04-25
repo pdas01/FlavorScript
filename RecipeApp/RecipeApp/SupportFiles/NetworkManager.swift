@@ -3,6 +3,7 @@ import SwiftUI
 /**
  NetworkManager deals with fetching network calls and decoding to desired format 
  */
+@MainActor
 final class NetworkManager {
     func recipes(_ fileURLWithPath: String) async throws -> RecipeList? {
         do {
